@@ -1,114 +1,182 @@
-class Car{
+import java.time.LocalDateTime;
+
+class Car {
     private int carId;
     private String brand;
     private String model;
-    private  double price;
+    private double price;
 
-    public Car(int carId,String brand,String model,Double price){
-       this.carId=carId;
-       this.brand=brand;
-       this.model=model;
-       this.price=price;
-        
+    public Car(int carId, String brand, String model, Double price) {
+        this.carId = carId;
+        this.brand = brand;
+        this.model = model;
+        this.price = price;
+
     }
-    public int getCarId(){
+
+    public int getCarId() {
         return carId;
     }
-    public void setCarId(int carId){
-        this.carId=carId;
+
+    public void setCarId(int carId) {
+        this.carId = carId;
     }
-    public String getBrand(){
+
+    public String getBrand() {
         return brand;
     }
-    public void setBrand(String brand){
-        this.brand=brand;
+
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
-    public String getModel(){
+
+    public String getModel() {
         return model;
     }
-    public void setModel(String model){
-        this.model=model;
+
+    public void setModel(String model) {
+        this.model = model;
     }
-    public Double getPrice(){
+
+    public Double getPrice() {
         return price;
     }
-    public void setPrice(Double price){
-        this.price=price;
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
-    public String getCarDetails(){
-        return "Car ID: "+carId+" Brand : "+brand+" Model : "+model+" Price : "+price;
+
+    public String getCarDetails() {
+        return "Car ID: " + carId + " Brand : " + brand + " Model : " + model + " Price : " + price;
     }
 }
+
+class CarDetails {
+    private LocalDateTime manufacturingDate;
+
+    private int totalCapacity;
+    private String transmission;
+
+    public CarDetails(LocalDateTime manufacturingDate, int totalCapacity, String transmission) {
+        this.manufacturingDate = manufacturingDate;
+        this.totalCapacity = totalCapacity;
+        this.transmission = transmission;
+    }
+
+    public LocalDateTime getLocalDateTime() {
+        return manufacturingDate;
+    }
+
+    public void setLocalDateTime() {
+        this.manufacturingDate = manufacturingDate;
+    }
+
+    public int getCapacity() {
+        return totalCapacity;
+    }
+
+    public void setCapacity() {
+        this.totalCapacity = totalCapacity;
+    }
+
+    public String getTransmission() {
+        return transmission;
+    }
+
+    public void setTransmission() {
+        this.transmission = transmission;
+    }
+
+    public String showCarDetails() {
+        return "Manufacturing Date & Time : " + manufacturingDate
+                + "\n" + "Total Capacity : " + totalCapacity +
+                "\n" + "Transmission : " + transmission;
+    }
+
+}
+
 class Customer {
     private int custId;
     private String custName;
 
-    public Customer(int custId,String custName){
-        if(custId<=0){
+    public Customer(int custId, String custName) {
+        if (custId <= 0) {
             throw new IllegalArgumentException("Customer ID can't be less than or equal to 0.");
         }
-        if(custName == null){
+        if (custName == null) {
             throw new IllegalArgumentException("Customer Name can't be empty.");
         }
-        this.custId=custId;
-        this.custName=custName;
-        
+        this.custId = custId;
+        this.custName = custName;
+
     }
-    public int getCustId(){
+
+    public int getCustId() {
         return custId;
     }
-    public void setCustName(String custName){
-        this.custName=custName;
+
+    public void setCustName(String custName) {
+        this.custName = custName;
     }
-    public String getCustName(){
+
+    public String getCustName() {
         return custName;
     }
-    public void display(){
-        System.out.println("Customer ID: "+custId);
-        System.out.println("Customer Name:"+custName);
+
+    public void display() {
+        System.out.println("Customer ID: " + custId);
+        System.out.println("Customer Name:" + custName);
     }
 }
+
 class Rent {
     private String company;
-    private static int total=0;
+    private static int total = 0;
 
-    public Rent(String company){
-        this.company=company;
+    public Rent(String company) {
+        this.company = company;
     }
-    public String getCompany(){
+
+    public String getCompany() {
         return company;
     }
-    public void setCompany(String company){
-        this.company=company;
+
+    public void setCompany(String company) {
+        this.company = company;
     }
-    public static int getTotalCars(){
+
+    public static int getTotalCars() {
         return total;
     }
-    public void addCar(Car car){
+
+    public void addCar(Car car) {
         total++;
-        
+
     }
-    public void display(){
-        System.out.println("Company name:"+company);
-        System.out.println("Total Cars:"+total);
+
+    public void display() {
+        System.out.println("Company name:" + company);
+        System.out.println("Total Cars:" + total);
     }
 
 }
 
-public class CarRental{
+public class CarRental {
     public static void main(String[] args) {
 
         Rent carrent = new Rent("Mahindra");
 
-        Car car1=new Car(1, "Toyota", "Innova", 700000.0d);        
+        Car car1 = new Car(1, "Toyota", "Innova", 700000.0d);
         carrent.addCar(car1);
-        
-        Customer cust1=new Customer(1, "ABC");
+
+        CarDetails cd1 = new CarDetails(LocalDateTime.of(2020, 5, 15, 9, 5, 5), 4, "Auto");
+
+        Customer cust1 = new Customer(1, "ABC");
 
         carrent.display();
         car1.getCarDetails();
+        System.out.println(cd1.showCarDetails());
         cust1.display();
-       
-        
+
     }
 }
