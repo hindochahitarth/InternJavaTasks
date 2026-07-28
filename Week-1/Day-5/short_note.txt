@@ -1,0 +1,41 @@
+short note on Owner.java , Pet.java, Vet.java;
+
+Owner.java :- Contains entity code means the way we would like to represent the class same will be in databse it would be added. We can define class name as table name using annotations  from jakarta package.
+For example @Entity and @Table(name="owners") will represent the table named owners in database.
+
+Owner class extends Person class
+
+Then we can mention columns we want in database using @Column annotation example For address we have used that annotation
+Then we can also put restrictions / pattern matching in columns using annotation for example we have used
+@NotBlank and @Pattern on telephone number field because we want that it should contains number only and it must be of 10 digits only
+
+After then we have used @OneToMany annotation that indicates one to many mapping and fetch type as eager so it will load all data immediately.
+@OrderBy used to arrange based on our requirements in sorting 
+
+Getters and Setters are used for all fields
+
+Then there are different methods for getPet by passing id or by passing name and toString() is overridden
+to display the details and method of addVisit() to add visit of pet 
+
+
+Pet.java :- 
+
+Pet class extends NamedEntity 
+in that class we have birthdate column  in that we have used @DateTimeFormat to match format of yyyy-mm-dd format
+then annotation of many to one for pettype then @joincolumn annotation to join column on database pet_id
+@Orderby used to sort in ascending order
+
+then we have created linkedhashset to store unique visits 
+Then in that we have Getters and setters method  for fields birthdate,pettype ,visits
+
+
+
+
+Vet.java :-
+
+Vet class extends Person class which act as entity in database as vets
+In that we have used @ManyToMany annotation which is used for many to many mapping and in that we have used fetch type as eager that will load data immediately.
+after than we have used @JoinTable which is used to join both tables and created Set called specialities
+
+Then using stream api we have used comparator to sort by names of specialities
+Then we have method to get total number of specialities and we can add any other speciality
