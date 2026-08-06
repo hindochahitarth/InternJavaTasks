@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 public class OrderService {
     private final RestaurantService restaurantService;
 
-    public OrderService(RestaurantService restaurantService){
-        this.restaurantService=restaurantService;
+    public OrderService(RestaurantService restaurantService) {
+        this.restaurantService = restaurantService;
     }
 
 }
