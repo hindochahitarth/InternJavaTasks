@@ -1,0 +1,67 @@
+package org.example.fooddeliverysystem.controller;
+
+import org.example.fooddeliverysystem.dto.MenuItemRequestDTO;
+import org.example.fooddeliverysystem.entity.MenuItem;
+import org.example.fooddeliverysystem.service.MenuItemService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/menu-items")
+public class MenuItemController {
+    private final MenuItemService menuItemService;
+
+    public MenuItemController(MenuItemService menuItemService) {
+        this.menuItemService = menuItemService;
+    }
+
+    @PostMapping("/createMenuItem")
+    public ResponseEntity<MenuItem> createMenuItem(@RequestBody MenuItemRequestDTO request) {
+        MenuItem menuItem = menuItemService.createMenuItem(request);
+        return new ResponseEntity<>(menuItem, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MenuItem> getMenuItemById(@PathVariable Long id) {
+        MenuItem menuItem = menuItemService.getMenuItemById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(menuItem);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MenuItem> updateMenuItem(@PathVariable Long id, @RequestBody MenuItemRequestDTO request) {
+        MenuItem menuItem = menuItemService.updateMenuItem(id, request);
+        return ResponseEntity.status(HttpStatus.OK).body(menuItem);
+    }
+
+    @GetMapping("/restaurant/{restaurantId}")
+    public ResponseEntity<List<MenuItem>> getMenuByRestaurant(@PathVariable Long restaurantId) {
+        List<MenuItem> menuItem = menuItemService.getMenuByRestaurantId(restaurantId);
+        return ResponseEntity.status(HttpStatus.OK).body(menuItem);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<MenuItem> deleteMenuItemById(@PathVariable Long id) {
+        menuItemService.deleteMenuItemById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/price")
+    public ResponseEntity<MenuItem> updateMenuItemByPrice(@PathVariable Long id, @RequestParam Double price) {
+        MenuItemRequestDTO menuItemRequestDTO = new MenuItemRequestDTO();
+        menuItemRequestDTO.setPrice(price);
+
+        MenuItem updated = menuItemService.updateMenuItemPrice(id, menuItemRequestDTO);
+        return ResponseEntity.ok(updated);
+    }
+
+    @GetMapping("/restaurant/{restaurantId}/category/{category}")
+    public ResponseEntity<List<MenuItem>> getMenuByRestaurantCategory(@PathVariable Long restaurantId,
+            @PathVariable String category) {
+        List<MenuItem> menuItems = menuItemService.getMenuByCategory(restaurantId, category);
+        return ResponseEntity.status(HttpStatus.OK).body(menuItems);
+    }
+
+}

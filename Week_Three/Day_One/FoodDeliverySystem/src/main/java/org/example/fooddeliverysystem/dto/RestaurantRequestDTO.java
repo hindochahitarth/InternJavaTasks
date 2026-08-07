@@ -1,5 +1,7 @@
 package org.example.fooddeliverysystem.dto;
-import java.util.*;
+
+import java.util.List;
+
 public class RestaurantRequestDTO {
 
     private String name;

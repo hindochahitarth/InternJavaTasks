@@ -24,6 +24,8 @@ public class RestaurantService {
         restaurant.setEmail(request.getEmail());
         restaurant.setPhone(request.getPhone());
 
+        // restaurant.setStatus(RestaurantStatus.ACTIVE);
+
         return restaurantRepository.save(restaurant);
     }
 
@@ -46,6 +48,10 @@ public class RestaurantService {
         restaurant.setAddress(request.getAddress());
 
         return restaurantRepository.save(restaurant);
+    }
+
+    public List<Restaurant> getRestaurantByName(String name) {
+        return restaurantRepository.findByName(name);
     }
 
 }

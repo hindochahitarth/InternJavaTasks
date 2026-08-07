@@ -7,14 +7,7 @@ import org.example.fooddeliverysystem.entity.Restaurant;
 import org.example.fooddeliverysystem.service.RestaurantService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController // used to return JSON data
 @RequestMapping("/api/restaurants") // base path for all API's
@@ -54,4 +47,10 @@ public class RestaurantController {
         return ResponseEntity.ok(updatedRestaurant);
     }
 
+    @GetMapping("/{name}")
+    public ResponseEntity<List<Restaurant>> getRestaurantByName(@PathVariable String name) {
+        List<Restaurant> restaurants = restaurantService.getRestaurantByName(name);
+        return ResponseEntity.status(HttpStatus.OK).body(restaurants);
+
+    }
 }

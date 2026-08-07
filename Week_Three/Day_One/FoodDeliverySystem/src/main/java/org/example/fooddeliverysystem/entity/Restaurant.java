@@ -33,6 +33,10 @@ public class Restaurant {
     @Column(unique = true)
     private String email;
 
+    // @Enumerated(EnumType.STRING)
+    //
+    // private RestaurantStatus status = RestaurantStatus.ACTIVE;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -121,4 +125,12 @@ public class Restaurant {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    // public RestaurantStatus getStatus() {
+    // return status;
+    // }
+    //
+    // public void setStatus(RestaurantStatus status) {
+    // this.status = status;
+    // }
 }
