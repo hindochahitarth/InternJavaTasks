@@ -1,21 +1,32 @@
 package org.example.fooddeliverysystem.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.transaction.Transaction;
+import jakarta.transaction.Transactional;
 import org.example.fooddeliverysystem.dto.RestaurantRequestDTO;
 import org.example.fooddeliverysystem.entity.Restaurant;
+import org.example.fooddeliverysystem.entity.TransactionLog;
 import org.example.fooddeliverysystem.repository.RestaurantRepository;
+import org.example.fooddeliverysystem.repository.TransactionLogRepository;
+import org.springframework.cglib.core.Local;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RestaurantService {
 
     private RestaurantRepository restaurantRepository;
+    private TransactionLogRepository transactionLogRepository;
 
-    public RestaurantService(RestaurantRepository restaurantRepository) {
+    public RestaurantService(RestaurantRepository restaurantRepository,TransactionLogRepository transactionLogRepository) {
         this.restaurantRepository = restaurantRepository;
+        this.transactionLogRepository=transactionLogRepository;
     }
 
+    @Transactional
     public Restaurant createRestaurant(RestaurantRequestDTO request) {
         Restaurant restaurant = new Restaurant();
         restaurant.setName(request.getName());
@@ -23,14 +34,21 @@ public class RestaurantService {
         restaurant.setDescription(request.getDescription());
         restaurant.setEmail(request.getEmail());
         restaurant.setPhone(request.getPhone());
-
         // restaurant.setStatus(RestaurantStatus.ACTIVE);
+        restaurant.setCity(request.getCity());
+        Restaurant savedRestaurant=restaurantRepository.save(restaurant);
 
-        return restaurantRepository.save(restaurant);
+        TransactionLog log=new TransactionLog();
+        log.setMessage("Created Restaurant "+savedRestaurant.getId());
+        log.setTimestamp(LocalDateTime.now());
+        transactionLogRepository.save(log);
+        return savedRestaurant;
+
+
     }
 
-    public List<Restaurant> getAllRestaurants() {
-        return restaurantRepository.findAll();
+    public Page<Restaurant> getAllRestaurants(Pageable pageable) {
+        return restaurantRepository.findAll(pageable);
     }
 
     public void deleteRestaurantById(Long id) {
@@ -46,6 +64,8 @@ public class RestaurantService {
         restaurant.setEmail(request.getEmail());
         restaurant.setDescription(request.getDescription());
         restaurant.setAddress(request.getAddress());
+        restaurant.setCity(request.getCity());
+
 
         return restaurantRepository.save(restaurant);
     }
@@ -53,5 +73,15 @@ public class RestaurantService {
     public List<Restaurant> getRestaurantByName(String name) {
         return restaurantRepository.findByName(name);
     }
+    public List<Restaurant> getRestaurantByCity(String city){
+        return  restaurantRepository.findByCity(city);
+    }
+    public List<Restaurant> searchRestaurantsByName(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return restaurantRepository.findAll();
+        }
+        return restaurantRepository.searchByName(keyword.trim());
+    }
+
 
 }

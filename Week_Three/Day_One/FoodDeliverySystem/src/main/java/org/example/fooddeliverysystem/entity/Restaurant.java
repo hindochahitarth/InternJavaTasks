@@ -28,6 +28,15 @@ public class Restaurant {
     // private List<String> cuisineType;
 
     private String address;
+    private  String city;
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
 
     private String phone;
     @Column(unique = true)
@@ -93,7 +102,7 @@ public class Restaurant {
     // public void setCuisineType(List<String> cuisineType) {
     // this.cuisineType = cuisineType;
     // }
-
+    
     public String getPhone() {
         return phone;
     }

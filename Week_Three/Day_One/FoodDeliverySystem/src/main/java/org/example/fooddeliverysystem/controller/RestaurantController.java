@@ -2,9 +2,13 @@ package org.example.fooddeliverysystem.controller;
 
 import java.util.List;
 
+import ch.qos.logback.core.pattern.util.RegularEscapeUtil;
 import org.example.fooddeliverysystem.dto.RestaurantRequestDTO;
 import org.example.fooddeliverysystem.entity.Restaurant;
 import org.example.fooddeliverysystem.service.RestaurantService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +25,12 @@ public class RestaurantController {
 
     // USING @RequestMapping(method=RequestMethod.GET)
     @GetMapping("/get-all-restaurants")
-    public ResponseEntity<List<Restaurant>> getAllRestaurant() {
-        List<Restaurant> restaurants = restaurantService.getAllRestaurants();
+    public ResponseEntity<Page<Restaurant>> getAllRestaurant(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Restaurant> restaurants = restaurantService.getAllRestaurants(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(restaurants);
     }
 
@@ -53,4 +61,15 @@ public class RestaurantController {
         return ResponseEntity.status(HttpStatus.OK).body(restaurants);
 
     }
+    @GetMapping("/city/{city}")
+    public ResponseEntity<List<Restaurant>> getRestaurantByCity(@PathVariable String city){
+        List<Restaurant> restaurants=restaurantService.getRestaurantByCity(city);
+        return ResponseEntity.status(HttpStatus.OK).body(restaurants);
+    }
+    @GetMapping("/search")
+    public ResponseEntity<List<Restaurant>> searchRestaurants(@RequestParam String keyword) {
+        List<Restaurant> results = restaurantService.searchRestaurantsByName(keyword);
+        return ResponseEntity.status(HttpStatus.OK).body(results);
+    }
+
 }
