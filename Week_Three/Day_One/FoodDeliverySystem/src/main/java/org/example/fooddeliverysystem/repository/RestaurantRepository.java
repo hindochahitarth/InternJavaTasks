@@ -3,6 +3,7 @@ package org.example.fooddeliverysystem.repository;
 import java.util.List;
 
 import org.example.fooddeliverysystem.entity.Restaurant;
+import org.example.fooddeliverysystem.entity.RestaurantStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
     List<Restaurant> findByName(String name);
+    List<Restaurant> findByStatus(RestaurantStatus status);
 
     @Query
     List<Restaurant> findByCity(@Param("city") String city);

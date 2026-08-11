@@ -6,7 +6,9 @@ import java.util.List;
 import jakarta.transaction.Transaction;
 import jakarta.transaction.Transactional;
 import org.example.fooddeliverysystem.dto.RestaurantRequestDTO;
+import org.example.fooddeliverysystem.dto.RestaurantResponseDTO;
 import org.example.fooddeliverysystem.entity.Restaurant;
+import org.example.fooddeliverysystem.entity.RestaurantStatus;
 import org.example.fooddeliverysystem.entity.TransactionLog;
 import org.example.fooddeliverysystem.repository.RestaurantRepository;
 import org.example.fooddeliverysystem.repository.TransactionLogRepository;
@@ -36,6 +38,7 @@ public class RestaurantService {
         restaurant.setPhone(request.getPhone());
         // restaurant.setStatus(RestaurantStatus.ACTIVE);
         restaurant.setCity(request.getCity());
+        restaurant.setStatus(RestaurantStatus.ACTIVE);
         Restaurant savedRestaurant=restaurantRepository.save(restaurant);
 
         TransactionLog log=new TransactionLog();
@@ -48,6 +51,8 @@ public class RestaurantService {
     }
 
     public Page<Restaurant> getAllRestaurants(Pageable pageable) {
+
+
         return restaurantRepository.findAll(pageable);
     }
 
@@ -81,6 +86,23 @@ public class RestaurantService {
             return restaurantRepository.findAll();
         }
         return restaurantRepository.searchByName(keyword.trim());
+    }
+    public RestaurantResponseDTO   toResponse(Restaurant restaurant){
+        return RestaurantResponseDTO.builder()
+                .id(restaurant.getId())
+                .name(restaurant.getName())
+                .description(restaurant.getDescription())
+                .address(restaurant.getAddress())
+                .phone(restaurant.getPhone())
+                .email(restaurant.getEmail())
+                .build();
+    }
+    public Restaurant toggleRestaurantStatus(Long id){
+        Restaurant restaurant=restaurantRepository.findById(id).orElse(null);
+        RestaurantStatus newStatus=(restaurant.getStatus() == RestaurantStatus.ACTIVE)?RestaurantStatus.INACTIVE:RestaurantStatus.ACTIVE;
+        restaurant.setStatus(newStatus);
+        Restaurant updatedRestaurant=restaurantRepository.save(restaurant);
+        return updatedRestaurant;
     }
 
 

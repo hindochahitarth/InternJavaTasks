@@ -2,14 +2,7 @@ package org.example.fooddeliverysystem.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "restaurants")
@@ -42,9 +35,9 @@ public class Restaurant {
     @Column(unique = true)
     private String email;
 
-    // @Enumerated(EnumType.STRING)
-    //
-    // private RestaurantStatus status = RestaurantStatus.ACTIVE;
+     @Enumerated(EnumType.STRING)
+
+     private RestaurantStatus status = RestaurantStatus.ACTIVE;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -99,6 +92,14 @@ public class Restaurant {
     // return cuisineType;
     // }
     //
+
+    public RestaurantStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(RestaurantStatus status) {
+        this.status = status;
+    }
     // public void setCuisineType(List<String> cuisineType) {
     // this.cuisineType = cuisineType;
     // }

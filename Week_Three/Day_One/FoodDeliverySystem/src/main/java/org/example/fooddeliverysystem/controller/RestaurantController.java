@@ -72,4 +72,10 @@ public class RestaurantController {
         return ResponseEntity.status(HttpStatus.OK).body(results);
     }
 
+    @PatchMapping("/toggle-restaurant-status/{id}")
+    public ResponseEntity<Restaurant> toggleRestaurantStatus(@PathVariable Long id){
+        Restaurant restaurant=restaurantService.toggleRestaurantStatus(id);
+        return ResponseEntity.status(HttpStatus.OK).body(restaurant);
+    }
+
 }
