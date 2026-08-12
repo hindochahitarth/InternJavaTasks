@@ -23,15 +23,27 @@ public class MenuItem {
 
     private String imageUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MenuItemStatus status = MenuItemStatus.AVAILABLE;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    public MenuItemStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(MenuItemStatus status) {
+        this.status = status;
+    }
 
     @PrePersist
     protected void onCreate() {

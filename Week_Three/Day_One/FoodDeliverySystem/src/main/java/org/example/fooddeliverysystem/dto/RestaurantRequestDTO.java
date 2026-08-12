@@ -1,8 +1,18 @@
 package org.example.fooddeliverysystem.dto;
 
+import org.example.fooddeliverysystem.entity.CuisineType;
+import org.example.fooddeliverysystem.entity.MenuItemStatus;
+
 import java.util.List;
 
 public class RestaurantRequestDTO {
+    // public List<CuisineType> getCuisineType() {
+    // return cuisineType;
+    // }
+    //
+    // public void setCuisineType(List<CuisineType> cuisineType) {
+    // this.cuisineType = cuisineType;
+    // }
 
     private String name;
     private String description;
@@ -10,7 +20,8 @@ public class RestaurantRequestDTO {
     private String address;
     private String phone;
     private String city;
-    private List<String> cuisineType;
+
+    // private List<CuisineType> cuisineType;
 
     public RestaurantRequestDTO() {
     }
@@ -63,11 +74,4 @@ public class RestaurantRequestDTO {
         this.phone = phone;
     }
 
-    public List<String> getCuisineType() {
-        return cuisineType;
-    }
-
-    public void setCuisineType(List<String> cuisineType) {
-        this.cuisineType = cuisineType;
-    }
 }

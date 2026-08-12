@@ -3,6 +3,7 @@ package org.example.fooddeliverysystem.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.example.fooddeliverysystem.entity.MenuItemStatus;
 
 public class MenuItemRequestDTO {
 
@@ -22,6 +23,15 @@ public class MenuItemRequestDTO {
 
     @NotNull(message = "Restaurant ID is required ")
     private Long restaurantId;
+    private MenuItemStatus menuItemStatus;
+
+    public MenuItemStatus getMenuItemStatus() {
+        return menuItemStatus;
+    }
+
+    public void setMenuItemStatus(MenuItemStatus menuItemStatus) {
+        this.menuItemStatus = menuItemStatus;
+    }
 
     public String getName() {
         return name;

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
     List<Restaurant> findByName(String name);
+
     List<Restaurant> findByStatus(RestaurantStatus status);
 
     @Query

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.example.fooddeliverysystem.dto.MenuItemRequestDTO;
 import org.example.fooddeliverysystem.entity.MenuItem;
+import org.example.fooddeliverysystem.entity.MenuItemStatus;
 import org.example.fooddeliverysystem.entity.Restaurant;
 import org.example.fooddeliverysystem.repository.MenuItemRepository;
 import org.example.fooddeliverysystem.repository.RestaurantRepository;
@@ -27,6 +28,8 @@ public class MenuItemService {
         menuItem.setDescription(request.getDescription());
         menuItem.setPrice(request.getPrice());
         menuItem.setImageUrl(request.getImageUrl());
+        menuItem.setStatus(
+                request.getMenuItemStatus() != null ? request.getMenuItemStatus() : MenuItemStatus.AVAILABLE);
         menuItem.setRestaurant(restaurant.orElse(null));
         menuItem.setCategory(request.getCategory());
 
@@ -45,6 +48,7 @@ public class MenuItemService {
         menuItem.setPrice(request.getPrice());
         menuItem.setImageUrl(request.getImageUrl());
         menuItem.setCategory(request.getCategory());
+
         return menuItemRepository.save(menuItem);
 
     }
