@@ -3,10 +3,13 @@ package org.example.fooddeliverysystem.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.fooddeliverysystem.dto.RestaurantRequestDTO;
 import org.example.fooddeliverysystem.entity.Restaurant;
 import org.example.fooddeliverysystem.entity.RestaurantStatus;
 import org.example.fooddeliverysystem.entity.TransactionLog;
+import org.example.fooddeliverysystem.exception.ResourceNotFoundException;
+import org.example.fooddeliverysystem.exception.RestaurantAlreadyExists;
 import org.example.fooddeliverysystem.mapper.RestaurantMapper;
 import org.example.fooddeliverysystem.repository.RestaurantRepository;
 import org.example.fooddeliverysystem.repository.TransactionLogRepository;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 
+@Slf4j
 @Service
 public class RestaurantService {
 
@@ -33,6 +37,12 @@ public class RestaurantService {
     @Transactional
     public Restaurant createRestaurant(RestaurantRequestDTO request) {
         Restaurant restaurant = restaurantMapper.toEntity(request);
+        if (!restaurantRepository.findByName(request.getName()).isEmpty()) {
+            log.warn("Duplicate restaurant registration of restaurant name : ",request.getName());
+            throw new RestaurantAlreadyExists("Restaurant with name '" + request.getName() + "' already exists.");
+        }
+
+
         restaurant.setName(request.getName());
         restaurant.setAddress(request.getAddress());
         restaurant.setDescription(request.getDescription());
@@ -43,6 +53,7 @@ public class RestaurantService {
         restaurant.setStatus(RestaurantStatus.ACTIVE);
         // restaurant.setCuisineType(request.getCuisineType());
         Restaurant savedRestaurant = restaurantRepository.save(restaurant);
+        log.info("Successfully created new Restaurant with ID: {} ",savedRestaurant.getId());
 
         TransactionLog log = new TransactionLog();
         log.setMessage("Created Restaurant " + savedRestaurant.getId());
@@ -52,16 +63,18 @@ public class RestaurantService {
     }
 
     public Page<Restaurant> getAllRestaurants(Pageable pageable) {
+
         return restaurantRepository.findAll(pageable);
     }
 
     public void deleteRestaurantById(Long id) {
+
         restaurantRepository.deleteById(id);
     }
 
     public Restaurant updateRestaurant(Long id, RestaurantRequestDTO request) {
         Restaurant restaurant = restaurantRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Restaurant not found "));
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found "));
 
         restaurant.setName(request.getName());
         restaurant.setPhone(request.getPhone());
@@ -100,7 +113,7 @@ public class RestaurantService {
     // .build();
     // }
     public Restaurant toggleRestaurantStatus(Long id) {
-        Restaurant restaurant = restaurantRepository.findById(id).orElse(null);
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(() ->new  ResourceNotFoundException("No Restaurant with Restaurant ID :- " +id+" Found "));
         RestaurantStatus newStatus = (restaurant.getStatus() == RestaurantStatus.ACTIVE) ? RestaurantStatus.INACTIVE
                 : RestaurantStatus.ACTIVE;
         restaurant.setStatus(newStatus);

@@ -2,7 +2,16 @@ package org.example.fooddeliverysystem.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "restaurants")
@@ -21,7 +30,7 @@ public class Restaurant {
     // private List<String> cuisineType;
 
     private String address;
-    private  String city;
+    private String city;
 
     public String getCity() {
         return city;
@@ -35,9 +44,8 @@ public class Restaurant {
     @Column(unique = true)
     private String email;
 
-     @Enumerated(EnumType.STRING)
-
-     private RestaurantStatus status = RestaurantStatus.ACTIVE;
+    @Enumerated(EnumType.STRING)
+    private RestaurantStatus status = RestaurantStatus.ACTIVE;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -88,11 +96,6 @@ public class Restaurant {
         this.address = address;
     }
 
-    // public List<String> getCuisineType() {
-    // return cuisineType;
-    // }
-    //
-
     public RestaurantStatus getStatus() {
         return status;
     }
@@ -100,10 +103,7 @@ public class Restaurant {
     public void setStatus(RestaurantStatus status) {
         this.status = status;
     }
-    // public void setCuisineType(List<String> cuisineType) {
-    // this.cuisineType = cuisineType;
-    // }
-    
+
     public String getPhone() {
         return phone;
     }
@@ -135,12 +135,16 @@ public class Restaurant {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-    // public RestaurantStatus getStatus() {
-    // return status;
+    //
+    // public List<CuisineType> getCuisineType() {
+    // return cuisineType;
     // }
     //
-    // public void setStatus(RestaurantStatus status) {
-    // this.status = status;
+    // public void setCuisineType(List<CuisineType> cuisineType) {
+    // this.cuisineType = cuisineType;
     // }
+    // @Enumerated(EnumType.STRING)
+    // @Column(nullable = false)
+    // private List<CuisineType> cuisineType;
+
 }
