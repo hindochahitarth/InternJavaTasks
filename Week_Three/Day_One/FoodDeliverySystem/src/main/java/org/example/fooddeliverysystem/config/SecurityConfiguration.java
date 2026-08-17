@@ -38,6 +38,7 @@ public class SecurityConfiguration {
 
                 .requestMatchers("/auth/**").permitAll()// allow anyone to access url with /auth
                 .requestMatchers("/error").permitAll()
+                .requestMatchers("/api/delivery/").hasRole(("DELIVERY_PARTNER"))
                 .requestMatchers("/api/delivery/").permitAll()
 
                 .requestMatchers("/api/restaurants/add-restaurant").hasRole("RESTAURANT_OWNER")
