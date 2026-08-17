@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController // used to return JSON data
 @RequestMapping("/api/restaurants") // base path for all API's
-public class RestaurantController {
+public class    RestaurantController {
 
     private final RestaurantService restaurantService;
 
@@ -44,9 +45,9 @@ public class RestaurantController {
         log.info("Fetching all restaurants ");
         return ResponseEntity.status(HttpStatus.OK).body(restaurants);
     }
-
-    // @RequestMapping(value="/create",method=RequestMethod.POST)
+// @RequestMapping(value="/create",method=RequestMethod.POST)
     // post requests to /api/restaurants/add-restaurant
+    @PreAuthorize("hasRole('RESTAURANT_OWNER')")
     @PostMapping("/add-restaurant")
     public ResponseEntity<Restaurant> createRestaurant(@RequestBody RestaurantRequestDTO request) {
 
@@ -104,3 +105,5 @@ public class RestaurantController {
     }
 
 }
+
+

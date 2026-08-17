@@ -9,6 +9,7 @@ public class RestaurantResponseDTO {
     private String address;
     private String email;
     private String phone;
+    private Long ownerId;
 
     public Long getId() {
         return id;
@@ -56,5 +57,13 @@ public class RestaurantResponseDTO {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 }

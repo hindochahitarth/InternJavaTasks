@@ -2,6 +2,7 @@ package org.example.fooddeliverysystem.service;
 
 import org.example.fooddeliverysystem.dto.LoginUserDto;
 import org.example.fooddeliverysystem.dto.RegisterUserDto;
+import org.example.fooddeliverysystem.dto.UserRequest;
 import org.example.fooddeliverysystem.entity.User;
 import org.example.fooddeliverysystem.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthenticationService {
+public class  AuthenticationService {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
@@ -25,11 +26,17 @@ public class AuthenticationService {
 
     }
 
-    public User signUp(RegisterUserDto input) {
-        User user = new User()
-                .setName(input.getFullname())
-                .setEmailId(input.getEmail())
-                .setPassword(passwordEncoder.encode(input.getPassword()));
+    public User signUp(UserRequest input) {
+        User user = new User();
+
+                user.setName(input.getName());
+                user.setEmailId(input.getEmailId());
+        user.setAge(input.getAge());
+
+        user.setAddress(input.getAddress());
+        user.setGender(input.getGender());
+        user.setRole(input.getRole());
+        user.setPassword(passwordEncoder.encode(input.getPassword()));
 
         return userRepository.save(user);
     }
@@ -37,8 +44,9 @@ public class AuthenticationService {
     public User authenticate(LoginUserDto input) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        input.getEmail(),
+                        input.getEmailId(),
                         input.getPassword()));
-        return userRepository.findByEmailId(input.getEmail()).orElseThrow();
+        return userRepository.findByEmailId(input.getEmailId()).orElseThrow();
     }
 }
+

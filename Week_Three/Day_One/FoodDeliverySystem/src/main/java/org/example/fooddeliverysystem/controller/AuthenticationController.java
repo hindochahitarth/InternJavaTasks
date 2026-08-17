@@ -1,9 +1,11 @@
 package org.example.fooddeliverysystem.controller;
 
+import jakarta.validation.Valid;
 import org.example.fooddeliverysystem.config.JwtService;
 import org.example.fooddeliverysystem.dto.LoginResponse;
 import org.example.fooddeliverysystem.dto.LoginUserDto;
 import org.example.fooddeliverysystem.dto.RegisterUserDto;
+import org.example.fooddeliverysystem.dto.UserRequest;
 import org.example.fooddeliverysystem.entity.User;
 import org.example.fooddeliverysystem.service.AuthenticationService;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +27,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> register(@RequestBody RegisterUserDto registerUserDto) {
+    public ResponseEntity<User> register(@RequestBody @Valid UserRequest registerUserDto) {
         User registeredUser = authenticationService.signUp(registerUserDto);
         return ResponseEntity.ok(registeredUser);
     }

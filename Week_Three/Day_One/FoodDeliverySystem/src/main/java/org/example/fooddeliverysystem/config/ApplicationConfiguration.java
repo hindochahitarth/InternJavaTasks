@@ -18,20 +18,32 @@ public class ApplicationConfiguration {
     public ApplicationConfiguration(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
     @Bean
+
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmailId(    username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        // Crucial: The incoming 'username' string variable represents the email passed
+        // during login
+        return username -> {
+
+            System.out.println(">>> SECURITY IS SEARCHING DATABASE FOR EMAIL: [" + username + "]");
+            return userRepository.findByEmailId(username)
+                    .orElseThrow(() -> new UsernameNotFoundException(
+                            "User completely missing in database for: " + username));
+        };
     }
+
     @Bean
-    BCryptPasswordEncoder passwordEncoder(){
+    BCryptPasswordEncoder passwordEncoder() {
 
         return new BCryptPasswordEncoder();
     }
+
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)throws Exception{
-            return configuration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
+
     @Bean
     public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
 

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.jspecify.annotations.Nullable;
 import org.springframework.cglib.core.Local;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
@@ -30,10 +31,35 @@ public class User implements UserDetails {
 
     private String emailId;
 
+    @Column(name = "password", nullable = false, length = 100)
     private String password;
-
     @Enumerated(EnumType.STRING)
+
     private Role role;
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -50,7 +76,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(new SimpleGrantedAuthority("ROLE_"+role.name()));
     }
 
     @Override
@@ -141,4 +167,5 @@ public class User implements UserDetails {
         this.password = password;
         return this;
     }
+
 }

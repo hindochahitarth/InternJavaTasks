@@ -5,14 +5,13 @@ import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.fooddeliverysystem.dto.RestaurantRequestDTO;
-import org.example.fooddeliverysystem.entity.Restaurant;
-import org.example.fooddeliverysystem.entity.RestaurantStatus;
-import org.example.fooddeliverysystem.entity.TransactionLog;
+import org.example.fooddeliverysystem.entity.*;
 import org.example.fooddeliverysystem.exception.ResourceNotFoundException;
 import org.example.fooddeliverysystem.exception.RestaurantAlreadyExists;
 import org.example.fooddeliverysystem.mapper.RestaurantMapper;
 import org.example.fooddeliverysystem.repository.RestaurantRepository;
 import org.example.fooddeliverysystem.repository.TransactionLogRepository;
+import org.example.fooddeliverysystem.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,18 +24,28 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final TransactionLogRepository transactionLogRepository;
+    private final UserService userService;
+    private final UserRepository userRepository;
     private RestaurantMapper restaurantMapper;
 
     public RestaurantService(RestaurantMapper restaurantMapper, RestaurantRepository restaurantRepository,
-            TransactionLogRepository transactionLogRepository) {
+                             TransactionLogRepository transactionLogRepository, UserService userService, UserRepository userRepository) {
         this.restaurantRepository = restaurantRepository;
         this.transactionLogRepository = transactionLogRepository;
         this.restaurantMapper = restaurantMapper;
+        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @Transactional
     public Restaurant createRestaurant(RestaurantRequestDTO request) {
-        Restaurant restaurant = restaurantMapper.toEntity(request);
+        User owner=userRepository.findById(request.getOwnerId()).orElseThrow(() -> new ResourceNotFoundException("User Not found with id"+request.getOwnerId()));
+
+        if(!owner.getRole().equals(Role.RESTAURANT_OWNER)){
+            throw new RuntimeException("User is not restaurant owner");
+        }
+        Restaurant restaurant=new Restaurant();
+      //  Restaurant restaurant = restaurantMapper.toEntity(request);
         if (!restaurantRepository.findByName(request.getName()).isEmpty()) {
             log.warn("Duplicate restaurant registration of restaurant name : ",request.getName());
             throw new RestaurantAlreadyExists("Restaurant with name '" + request.getName() + "' already exists.");
@@ -48,11 +57,12 @@ public class RestaurantService {
         restaurant.setDescription(request.getDescription());
         restaurant.setEmail(request.getEmail());
         restaurant.setPhone(request.getPhone());
+        //restaurant.setOwner(owner);
         // restaurant.setStatus(RestaurantStatus.ACTIVE);
         restaurant.setCity(request.getCity());
         restaurant.setStatus(RestaurantStatus.ACTIVE);
         // restaurant.setCuisineType(request.getCuisineType());
-        Restaurant savedRestaurant = restaurantRepository.save(restaurant);
+        Restaurant savedRestaurant = restaurantRepository.saveAndFlush(restaurant);
         log.info("Successfully created new Restaurant with ID: {} ",savedRestaurant.getId());
 
         TransactionLog log = new TransactionLog();

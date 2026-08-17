@@ -17,11 +17,29 @@ public class RestaurantRequestDTO {
     private String name;
     private String description;
     private String email;
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
     private String address;
     private String phone;
     private String city;
+    private Long ownerId;
+    private String ownerName;
 
-    // private List<CuisineType> cuisineType;
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
+// private List<CuisineType> cuisineType;
 
     public RestaurantRequestDTO() {
     }
