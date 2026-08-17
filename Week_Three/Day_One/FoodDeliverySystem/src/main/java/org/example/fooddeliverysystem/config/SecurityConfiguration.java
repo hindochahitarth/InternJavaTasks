@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -28,33 +27,35 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf(csrf -> csrf.disable());
-        httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) {
+        httpSecurity.csrf(csrf -> csrf.disable());//turns off csrf
+        httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()));//links custom origin rules to match frontend with backend
+        //opens rules who can access which url path
         httpSecurity.authorizeHttpRequests(auth -> auth
 
-                .requestMatchers("/auth/**").permitAll()
-                .anyRequest()
-                .authenticated());
+
+                .requestMatchers("/auth/**").permitAll()//allow anyone to access url with /auth
+                .anyRequest()//for every single url
+                .authenticated());//user must be logged in
         httpSecurity.sessionManagement(session -> session
 
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))//never to create session
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);//filter jwt first
 
-        return httpSecurity.build();
+        return httpSecurity.build();//locks in all settings and configurations
     }
 
+    //control which external ports can access backend
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:8080"));
-        configuration.setAllowedMethods(List.of("GET", "POST"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        CorsConfiguration configuration = new CorsConfiguration();//settings object
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));//frontend running o n this
+        configuration.setAllowedMethods(List.of("GET", "POST"));//frontend use get and post only
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));//puts jwt token frontend send token
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", configuration);//allow to every single endpooint
         return source;
     }
 
