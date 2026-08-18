@@ -9,6 +9,7 @@ import org.example.fooddeliverysystem.entity.*;
 import org.example.fooddeliverysystem.exception.ResourceNotFoundException;
 import org.example.fooddeliverysystem.exception.RestaurantAlreadyExists;
 import org.example.fooddeliverysystem.mapper.RestaurantMapper;
+import org.example.fooddeliverysystem.repository.CuisineTypeRepository;
 import org.example.fooddeliverysystem.repository.RestaurantRepository;
 import org.example.fooddeliverysystem.repository.TransactionLogRepository;
 import org.example.fooddeliverysystem.repository.UserRepository;
@@ -27,14 +28,17 @@ public class RestaurantService {
     private final UserService userService;
     private final UserRepository userRepository;
     private RestaurantMapper restaurantMapper;
+    private final CuisineTypeRepository cuisineTypeRepository;
 
     public RestaurantService(RestaurantMapper restaurantMapper, RestaurantRepository restaurantRepository,
-                             TransactionLogRepository transactionLogRepository, UserService userService, UserRepository userRepository) {
+                             TransactionLogRepository transactionLogRepository, UserService userService, UserRepository userRepository, CuisineTypeRepository cuisineTypeRepository) {
         this.restaurantRepository = restaurantRepository;
         this.transactionLogRepository = transactionLogRepository;
         this.restaurantMapper = restaurantMapper;
         this.userService = userService;
         this.userRepository = userRepository;
+        this.cuisineTypeRepository = cuisineTypeRepository;
+
     }
 
     @Transactional
@@ -62,6 +66,16 @@ public class RestaurantService {
         restaurant.setCity(request.getCity());
         restaurant.setStatus(RestaurantStatus.ACTIVE);
         // restaurant.setCuisineType(request.getCuisineType());
+        List<CuisineType> cuisineTypes =
+                cuisineTypeRepository.findAllById(request.getCuisineTypeIds());
+
+        if (cuisineTypes.size() != request.getCuisineTypeIds().size()) {
+            throw new ResourceNotFoundException(
+                    "One or more cuisine types not found"
+            );
+        }
+
+        restaurant.setCuisineTypes(cuisineTypes);
         Restaurant savedRestaurant = restaurantRepository.saveAndFlush(restaurant);
         log.info("Successfully created new Restaurant with ID: {} ",savedRestaurant.getId());
 

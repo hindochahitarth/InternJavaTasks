@@ -14,6 +14,7 @@ public class RestaurantRequestDTO {
     // this.cuisineType = cuisineType;
     // }
 
+    private List<Long> cuisineTypeIds;
     private String name;
     private String description;
     private String email;
@@ -90,6 +91,13 @@ public class RestaurantRequestDTO {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+    public List<Long> getCuisineTypeIds() {
+        return cuisineTypeIds;
+    }
+
+    public void setCuisineTypeIds(List<Long> cuisineTypeIds) {
+        this.cuisineTypeIds = cuisineTypeIds;
     }
 
 }

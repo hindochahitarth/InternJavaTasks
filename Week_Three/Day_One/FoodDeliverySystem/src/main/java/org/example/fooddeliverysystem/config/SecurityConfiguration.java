@@ -2,6 +2,7 @@ package org.example.fooddeliverysystem.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,9 +40,12 @@ public class SecurityConfiguration {
                 .requestMatchers("/auth/**").permitAll()// allow anyone to access url with /auth
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/delivery/").hasRole(("DELIVERY_PARTNER"))
-                .requestMatchers("/api/delivery/").permitAll()
+
 
                 .requestMatchers("/api/restaurants/add-restaurant").hasRole("RESTAURANT_OWNER")
+                .requestMatchers(HttpMethod.POST, "/api/cuisines/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/cuisines/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/cuisines/**").hasRole("ADMIN")
                 .anyRequest()// for every single url
                 .authenticated());// user must be logged in
         httpSecurity.sessionManagement(session -> session
@@ -59,7 +63,9 @@ public class SecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();// settings object
         configuration.setAllowedOrigins(List.of("http://localhost:8080"));// frontend running o n this
-        configuration.setAllowedMethods(List.of("GET", "POST"));// frontend use get and post only
+        configuration.setAllowedMethods(
+                List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        );
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));// puts jwt token frontend send token
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
