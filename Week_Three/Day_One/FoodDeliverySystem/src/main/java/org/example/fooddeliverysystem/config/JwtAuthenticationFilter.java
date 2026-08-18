@@ -99,8 +99,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
+            logger.error("JWT Filter interception error occurred: ", e);
+
             handlerExceptionResolver.resolveException(request, response, null, e);
         }
+        filterChain.doFilter(request, response);
 
     }
 }

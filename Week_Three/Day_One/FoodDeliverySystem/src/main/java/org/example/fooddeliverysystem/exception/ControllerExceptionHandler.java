@@ -10,59 +10,68 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import java.lang.module.ResolutionException;
 import java.util.Date;
 
-
-@ControllerAdvice
+@Slf4j
+@RestControllerAdvice//global exception handler
 public class ControllerExceptionHandler {
-    private static final Logger log = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
+    @ExceptionHandler({ResourceNotFoundException.class, MenuItemNotFoundException.class, DeliverPartnerNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorMessage resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+        //send json body as return type
+        //String mssg=switch (ex) {
+          //  case ResourceNotFoundException r -> r.getMessage();
+         //   case MenuItemNotFoundException m -> m.getMessage();
+        //    case DeliverPartnerNotFoundException d-> d.getMessage();
 
-    @ExceptionHandler(ResolutionException.class)
-    public ResponseEntity<ErrorMessage> resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-
+       // };
        log.warn("Resource look up  Failed :{} ",ex.getMessage());
-        ErrorMessage message = new ErrorMessage(
+        return new ErrorMessage(
                 HttpStatus.NOT_FOUND.value(),
                 new Date(),
                 ex.getMessage(),
-                request.getDescription(false));
-
-        return new ResponseEntity<ErrorMessage>(message, HttpStatus.NOT_FOUND);
+                request.getDescription(false));//for getting sensitive data like IP
     }
-    @ExceptionHandler(RestaurantAlreadyExists.class)
-    public ResponseEntity<ErrorMessage> restaurantAlreadyExistsException(RestaurantAlreadyExists restaurantAlreadyExists,WebRequest request){
-        ErrorMessage message=new ErrorMessage(
+    @ExceptionHandler({RestaurantAlreadyExists.class,DeliveryPartnerAlreadyExists.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorMessage restaurantAlreadyExistsException(RestaurantAlreadyExists ex,WebRequest request){
+        //String mssg=switch (ex){
+         //   case RestaurantAlreadyExists r->"Restaurant Already Exists"+r.getMessage();
+         //   case DeliveryPartnerAlreadyExists d->"DeliveryPartner Already Exists"+d.getMessage();
+      //  };
+        return new ErrorMessage(
                 HttpStatus.CONFLICT.value(),
                 new Date(),
-                restaurantAlreadyExists.getMessage(),
+                ex.getMessage(),
+                //mssg,
                 request.getDescription(false));
-        return new ResponseEntity<ErrorMessage>(message,HttpStatus.CONFLICT);
+
     }
     @ExceptionHandler(RestaurantClosedException.class)
-    public ResponseEntity<ErrorMessage> restaurantClosedException(RestaurantClosedException restaurantClosedException,WebRequest request){
-        ErrorMessage message=new ErrorMessage(
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorMessage restaurantClosedException(RestaurantClosedException restaurantClosedException,WebRequest request){
+        return new ErrorMessage(
                 HttpStatus.FORBIDDEN.value(),
                 new Date(),
                 restaurantClosedException.getMessage(),
                 request.getDescription(false)
         );
-        return new ResponseEntity<ErrorMessage>(message,HttpStatus.FORBIDDEN);
     }
     @ExceptionHandler(InvalidMenuItemPrice.class)
-    public ResponseEntity<ErrorMessage> invalidMenuItemPrice(InvalidMenuItemPrice invalidMenuItemPrice,WebRequest request){
-        ErrorMessage errorMessage=new ErrorMessage(
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage invalidMenuItemPrice(InvalidMenuItemPrice invalidMenuItemPrice,WebRequest request){
+        return new ErrorMessage(
                 HttpStatus.BAD_REQUEST.value(),
                 new Date(),
                 invalidMenuItemPrice.getMessage(),
                 request.getDescription(false)
         );
-        return new ResponseEntity<ErrorMessage>(errorMessage,HttpStatus.BAD_REQUEST);
     }
-
-
 }
 

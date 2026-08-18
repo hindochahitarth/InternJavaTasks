@@ -56,6 +56,7 @@ public class    RestaurantController {
 
         return new ResponseEntity<>(savedRestaurant, HttpStatus.CREATED);
     }
+    @PreAuthorize("hasRole('RESTAURANT_OWNER')")
 
     @DeleteMapping("/delete-restaurant/{id}")
     public ResponseEntity<HttpStatus> deleteRestaurantById(@PathVariable Long id) {
@@ -64,6 +65,7 @@ public class    RestaurantController {
         restaurantService.deleteRestaurantById(id);
         return ResponseEntity.noContent().build();
     }
+    @PreAuthorize("hasRole('RESTAURANT_OWNER')")
 
     @PutMapping("/update-restaurant/{id}")
     public ResponseEntity<Restaurant> updateRestaurant(@PathVariable Long id,
@@ -81,7 +83,6 @@ public class    RestaurantController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.status(HttpStatus.OK).body(restaurants);
-
     }
 
     @GetMapping("/city/{city}")
@@ -96,7 +97,7 @@ public class    RestaurantController {
         List<Restaurant> results = restaurantService.searchRestaurantsByName(keyword);
         return ResponseEntity.status(HttpStatus.OK).body(results);
     }
-
+    @PreAuthorize("hasRole('RESTAURANT_OWNER')")
     @PatchMapping("/toggle-restaurant-status/{id}")
     public ResponseEntity<Restaurant> toggleRestaurantStatus(@PathVariable Long id) {
         log.info("Toggling Restaurant Status");

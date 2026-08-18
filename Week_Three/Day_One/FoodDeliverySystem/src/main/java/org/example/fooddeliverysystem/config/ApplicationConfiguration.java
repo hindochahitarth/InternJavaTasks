@@ -22,14 +22,13 @@ public class ApplicationConfiguration {
     @Bean
 
     public UserDetailsService userDetailsService() {
-        // Crucial: The incoming 'username' string variable represents the email passed
         // during login
         return username -> {
 
-            System.out.println(">>> SECURITY IS SEARCHING DATABASE FOR EMAIL: [" + username + "]");
+           // System.out.println(">>> SECURITY IS SEARCHING DATABASE FOR EMAIL: [" + username + "]");
             return userRepository.findByEmailId(username)
                     .orElseThrow(() -> new UsernameNotFoundException(
-                            "User completely missing in database for: " + username));
+                            "User missing in database for: " + username));
         };
     }
 
