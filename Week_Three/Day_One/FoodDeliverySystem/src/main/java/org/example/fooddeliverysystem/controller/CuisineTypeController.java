@@ -18,7 +18,8 @@ public class CuisineTypeController {
     public CuisineTypeController(CuisineTypeService cuisineTypeService) {
         this.cuisineTypeService = cuisineTypeService;
     }
-    @PreAuthorize("hasRole('ADMIN')")
+
+    @PreAuthorize("hasRole('RESTAURANT_OWNER') or hasRole('ADMIN')")
     @PostMapping("/add-cuisine")
     public ResponseEntity<CuisineType> createCuisine(
             @RequestBody CuisineType cuisineType) {

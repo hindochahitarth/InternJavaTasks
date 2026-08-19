@@ -20,29 +20,30 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-
     public UserDetailsService userDetailsService() {
         // during login
         return username -> {
 
-           // System.out.println(">>> SECURITY IS SEARCHING DATABASE FOR EMAIL: [" + username + "]");
             return userRepository.findByEmailId(username)
                     .orElseThrow(() -> new UsernameNotFoundException(
                             "User missing in database for: " + username));
         };
     }
-
+    //bcrypt proivdes one way hashing ,uses salt automatically
+    //salt:-random data added
+    //Blowfish algorithm
+//    BCrypt extracts salt & cost from stored hash
+//    Re-hashes entered password with same parameters
+//    Compares the result
     @Bean
     BCryptPasswordEncoder passwordEncoder() {
 
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder();//default strength is 10
     }
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
-
     @Bean
     public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
 

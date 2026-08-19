@@ -2,6 +2,7 @@ package org.example.fooddeliverysystem.repository;
 
 import java.util.List;
 
+import org.example.fooddeliverysystem.entity.CuisineType;
 import org.example.fooddeliverysystem.entity.Restaurant;
 import org.example.fooddeliverysystem.entity.RestaurantStatus;
 import org.springframework.data.jpa.repository.JpaRepository;

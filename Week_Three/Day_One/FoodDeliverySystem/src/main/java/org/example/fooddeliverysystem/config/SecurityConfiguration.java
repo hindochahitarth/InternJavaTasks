@@ -42,8 +42,10 @@ public class SecurityConfiguration {
                 .requestMatchers("/api/delivery/").hasRole(("DELIVERY_PARTNER"))
 
 
-                .requestMatchers("/api/restaurants/add-restaurant").hasRole("RESTAURANT_OWNER")
+                .requestMatchers(HttpMethod.POST,"/api/restaurants/add-restaurant").hasRole("RESTAURANT_OWNER")
                 .requestMatchers(HttpMethod.POST, "/api/cuisines/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/cuisines/**").hasRole("RESTAURANT_OWNER")
+
                 .requestMatchers(HttpMethod.PUT, "/api/cuisines/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/cuisines/**").hasRole("ADMIN")
                 .anyRequest()// for every single url

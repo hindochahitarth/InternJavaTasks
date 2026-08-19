@@ -52,10 +52,6 @@ public class RestaurantService {
         }
         Restaurant restaurant=new Restaurant();
       //  Restaurant restaurant = restaurantMapper.toEntity(request);
-        if (!restaurantRepository.findByName(request.getName()).isEmpty()) {
-            log.warn("Duplicate restaurant registration of restaurant name : ",request.getName());
-            throw new RestaurantAlreadyExists("Restaurant with name '" + request.getName() + "' already exists.");
-        }
 
 
         restaurant.setName(request.getName());
@@ -117,7 +113,9 @@ public class RestaurantService {
 
         return restaurantRepository.findByName(name);
     }
-
+//    public List<Restaurant> getRestaurantByCuisine(String cuisineName){
+//
+//    }
     public List<Restaurant> getRestaurantByCity(String city) {
         return restaurantRepository.findByCity(city);
     }
@@ -147,4 +145,5 @@ public class RestaurantService {
         Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
         return updatedRestaurant;
     }
+
 }
