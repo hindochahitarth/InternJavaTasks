@@ -1,7 +1,9 @@
 package org.example.fooddeliverysystem.service;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.fooddeliverysystem.dto.RestaurantRequestDTO;
@@ -68,6 +70,8 @@ public class RestaurantService {
         // restaurant.setCuisineType(request.getCuisineType());
         List<CuisineType> cuisineTypes =
                 cuisineTypeRepository.findAllById(request.getCuisineTypeIds());
+        Set<CuisineType> cuisineSet = new LinkedHashSet<>(cuisineTypes);
+        restaurant.setCuisineTypes(cuisineSet);
 
         if (cuisineTypes.size() != request.getCuisineTypeIds().size()) {
             throw new ResourceNotFoundException(
@@ -75,7 +79,6 @@ public class RestaurantService {
             );
         }
 
-        restaurant.setCuisineTypes(cuisineTypes);
         Restaurant savedRestaurant = restaurantRepository.saveAndFlush(restaurant);
         log.info("Successfully created new Restaurant with ID: {} ",savedRestaurant.getId());
 

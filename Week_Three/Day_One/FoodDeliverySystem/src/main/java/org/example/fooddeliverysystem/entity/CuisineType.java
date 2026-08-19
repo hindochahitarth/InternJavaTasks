@@ -1,6 +1,8 @@
 package org.example.fooddeliverysystem.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class CuisineType {
     private String cuisineName;
 
     @ManyToMany(mappedBy = "cuisineTypes")
-    @JsonIgnore
+    @JsonIgnoreProperties("cuisineTypes")
     private List<Restaurant> restaurants;
 
     public Long getId() {

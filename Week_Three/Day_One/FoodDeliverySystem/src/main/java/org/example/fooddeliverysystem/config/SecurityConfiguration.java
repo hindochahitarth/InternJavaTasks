@@ -62,14 +62,14 @@ public class SecurityConfiguration {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();// settings object
-        configuration.setAllowedOrigins(List.of("http://localhost:8080"));// frontend running o n this
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));// frontend running o n this
         configuration.setAllowedMethods(
                 List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
         );
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));// puts jwt token frontend send token
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);// allow to every single endpooint
+        source.registerCorsConfiguration("/**", configuration);// allow to every single endpooint match any path and all sub-paths
         return source;
     }
 

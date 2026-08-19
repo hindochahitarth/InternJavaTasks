@@ -1,5 +1,6 @@
 package org.example.fooddeliverysystem.exception;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
 import org.slf4j.Logger;
@@ -39,14 +40,14 @@ public class ControllerExceptionHandler {
                 request.getDescription(false));//for getting sensitive data like IP
     }
     @ExceptionHandler({RestaurantAlreadyExists.class,DeliveryPartnerAlreadyExists.class})
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessage restaurantAlreadyExistsException(RestaurantAlreadyExists ex,WebRequest request){
         //String mssg=switch (ex){
          //   case RestaurantAlreadyExists r->"Restaurant Already Exists"+r.getMessage();
          //   case DeliveryPartnerAlreadyExists d->"DeliveryPartner Already Exists"+d.getMessage();
       //  };
         return new ErrorMessage(
-                HttpStatus.CONFLICT.value(),
+                HttpStatus.BAD_REQUEST.value(),
                 new Date(),
                 ex.getMessage(),
                 //mssg,
@@ -71,6 +72,18 @@ public class ControllerExceptionHandler {
                 new Date(),
                 invalidMenuItemPrice.getMessage(),
                 request.getDescription(false)
+        );
+    }
+    @ExceptionHandler(ExpiredJwtException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorMessage invalidJwtToken(ExpiredJwtException e,WebRequest request){
+        log.warn("Invalid JWT Token ");
+        return new ErrorMessage(
+                HttpStatus.UNAUTHORIZED.value(),
+                new Date(),
+                "Your access token has expired. Please log in again to refresh token"+e.getMessage(),
+                request.getDescription(false)
+
         );
     }
 }

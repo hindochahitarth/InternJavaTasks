@@ -5,7 +5,10 @@ import org.example.fooddeliverysystem.exception.ResourceNotFoundException;
 import org.example.fooddeliverysystem.repository.CuisineTypeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CuisineTypeService {
@@ -21,7 +24,11 @@ public class CuisineTypeService {
     }
 
     public List<CuisineType> getAllCuisines() {
-        return cuisineTypeRepository.findAll();
+        List<CuisineType> rawCuisines = cuisineTypeRepository.findAll();
+
+        Set<CuisineType> uniqueCuisines = new LinkedHashSet<>(rawCuisines);
+
+        return new ArrayList<>(uniqueCuisines);
     }
 
     public CuisineType getCuisineById(Long id) {

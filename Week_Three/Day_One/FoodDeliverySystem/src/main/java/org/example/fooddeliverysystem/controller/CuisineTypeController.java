@@ -4,6 +4,7 @@ import org.example.fooddeliverysystem.entity.CuisineType;
 import org.example.fooddeliverysystem.service.CuisineTypeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +18,8 @@ public class CuisineTypeController {
     public CuisineTypeController(CuisineTypeService cuisineTypeService) {
         this.cuisineTypeService = cuisineTypeService;
     }
-
-    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/add-cuisine")
     public ResponseEntity<CuisineType> createCuisine(
             @RequestBody CuisineType cuisineType) {
 
@@ -30,7 +31,7 @@ public class CuisineTypeController {
                 .body(savedCuisine);
     }
 
-    @GetMapping
+    @GetMapping("/getCuisines")
     public ResponseEntity<List<CuisineType>> getAllCuisines() {
 
         return ResponseEntity.ok(
@@ -38,7 +39,7 @@ public class CuisineTypeController {
         );
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<CuisineType> getCuisineById(
             @PathVariable Long id) {
 
@@ -46,8 +47,8 @@ public class CuisineTypeController {
                 cuisineTypeService.getCuisineById(id)
         );
     }
-
-    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/update/{id}")
     public ResponseEntity<CuisineType> updateCuisine(
             @PathVariable Long id,
             @RequestBody CuisineType cuisineType) {
@@ -56,8 +57,8 @@ public class CuisineTypeController {
                 cuisineTypeService.updateCuisine(id, cuisineType)
         );
     }
-
-    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteCuisine(
             @PathVariable Long id) {
 

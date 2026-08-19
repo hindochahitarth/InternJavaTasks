@@ -2,8 +2,12 @@ package org.example.fooddeliverysystem.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -134,12 +138,13 @@ public class Restaurant {
             joinColumns = @JoinColumn(name = "restaurant_id"),
             inverseJoinColumns = @JoinColumn(name = "cuisine_type_id")
     )
-    private List<CuisineType> cuisineTypes = new ArrayList<>();
-    public List<CuisineType> getCuisineTypes() {
+    @JsonIgnoreProperties("restaurants")
+    private Set<CuisineType> cuisineTypes = new LinkedHashSet<>();
+    public Set<CuisineType> getCuisineTypes() {
         return cuisineTypes;
     }
 
-    public void setCuisineTypes(List<CuisineType> cuisineTypes) {
+    public void setCuisineTypes(Set<CuisineType> cuisineTypes) {
         this.cuisineTypes = cuisineTypes;
     }
 

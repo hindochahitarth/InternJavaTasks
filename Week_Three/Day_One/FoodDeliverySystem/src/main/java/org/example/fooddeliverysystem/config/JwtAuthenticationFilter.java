@@ -1,5 +1,7 @@
 package org.example.fooddeliverysystem.config;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,6 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain) throws ServletException, IOException {
         String path = request.getServletPath();
 
+
         if (path.startsWith("/api/auth/")) {
             filterChain.doFilter(request, response);
             return;
@@ -53,7 +56,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // through before reaching code
         final String authHeader = request.getHeader("Authorization");
         // looks inside http headers for key authorization
-        if (authHeader == null || !authHeader.startsWith("Bearer")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer")) {//part of O Auth authorization
+            //Authorization: Bearer <JWT_TOKEN> for stateless jwt
+            //Authorization: Basic<BASE64_Credentials> for raw username password
             // if header is missing or it does not start with bearer means user is trying to
             // access
             // public pages so it will pass the security check
@@ -79,8 +84,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // compares username inside token with username loaded from database
                 if (jwtService.isTokenValid(jwt, userDetails)) {
 
+                    //used to target specific key "roles" inside jwt payload
+                    //wildcard used java does not know roles are stored in plain strings ("ROLE_USER")
                     List<?> roles = jwtService.extractClaim(jwt, claims -> claims.get("roles", java.util.List.class));
-                    List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                    List<SimpleGrantedAuthority> authorities = new ArrayList<>();//used to hold roles as security cant understand raw strings
                     if (roles != null) {
                         authorities = roles.stream()
                                 .map(role -> new SimpleGrantedAuthority(role.toString()))
@@ -98,10 +105,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
             filterChain.doFilter(request, response);
-        } catch (Exception e) {
+        } catch (ExpiredJwtException e) {
             logger.error("JWT Filter interception error occurred: ", e);
 
             handlerExceptionResolver.resolveException(request, response, null, e);
+        }
+        catch (JwtException e){
+            handlerExceptionResolver.resolveException(request,response,null,e);
         }
         filterChain.doFilter(request, response);
 
