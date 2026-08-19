@@ -1,11 +1,13 @@
 package org.example.fooddeliverysystem.config;
 
 import io.jsonwebtoken.ExpiredJwtException;
+
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.example.fooddeliverysystem.exception.JwtTokenMissingException;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
@@ -47,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
 
 
-        if (path.startsWith("/api/auth/")) {
+        if (path.startsWith("/auth/")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -56,13 +58,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // through before reaching code
         final String authHeader = request.getHeader("Authorization");
         // looks inside http headers for key authorization
-        if (authHeader == null || !authHeader.startsWith("Bearer")) {//part of O Auth authorization
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {//part of O Auth authorization
             //Authorization: Bearer <JWT_TOKEN> for stateless jwt
             //Authorization: Basic<BASE64_Credentials> for raw username password
             // if header is missing or it does not start with bearer means user is trying to
             // access
             // public pages so it will pass the security check
-            filterChain.doFilter(request, response);
+            //filterChain.doFilter(request, response);
+            JwtTokenMissingException exception =
+                    new JwtTokenMissingException(
+                            "Authorization token not found. Please provide a Bearer token."
+                    );
+
+            handlerExceptionResolver.resolveException(
+                    request,
+                    response,
+                    null,
+                    exception
+            );
+
+
             return;
         }
         // token extraction
@@ -109,11 +124,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             logger.error("JWT Filter interception error occurred: ", e);
 
             handlerExceptionResolver.resolveException(request, response, null, e);
+
         }
+
         catch (JwtException e){
             handlerExceptionResolver.resolveException(request,response,null,e);
         }
-        filterChain.doFilter(request, response);
+        //filterChain.doFilter(request, response);
+        catch (IllegalArgumentException e) {
+//
+//            logger.warn("Invalid JWT input: {}", e.getMessage());
 
+            handlerExceptionResolver.resolveException(
+                    request, response, null, e
+            );
+
+            return;
+    }
     }
 }

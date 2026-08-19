@@ -27,7 +27,7 @@ public class ControllerExceptionHandler {
     public ErrorMessage resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
         //send json body as return type
         //String mssg=switch (ex) {
-          //  case ResourceNotFoundException r -> r.getMessage();
+          //  case Reso urceNotFoundException r -> r.getMessage();
          //   case MenuItemNotFoundException m -> m.getMessage();
         //    case DeliverPartnerNotFoundException d-> d.getMessage();
 
@@ -84,6 +84,21 @@ public class ControllerExceptionHandler {
                 "Your access token has expired. Please log in again to refresh token"+e.getMessage(),
                 request.getDescription(false)
 
+        );
+    }
+    @ExceptionHandler(JwtTokenMissingException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorMessage jwtTokenMissing(
+            JwtTokenMissingException e,
+            WebRequest request) {
+
+        log.warn("JWT token missing");
+
+        return new ErrorMessage(
+                HttpStatus.UNAUTHORIZED.value(),
+                new Date(),
+                "Authorization token not found. Please provide a Bearer token.",
+                request.getDescription(false)
         );
     }
 }
