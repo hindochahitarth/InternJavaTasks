@@ -1,12 +1,14 @@
 package org.example.fooddeliverysystem.exception;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -76,7 +78,7 @@ public class ControllerExceptionHandler {
     }
     @ExceptionHandler(ExpiredJwtException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorMessage invalidJwtToken(ExpiredJwtException e,WebRequest request){
+    public ErrorMessage expiredJwtToken(ExpiredJwtException e,WebRequest request){
         log.warn("Invalid JWT Token ");
         return new ErrorMessage(
                 HttpStatus.UNAUTHORIZED.value(),
@@ -98,6 +100,36 @@ public class ControllerExceptionHandler {
                 HttpStatus.UNAUTHORIZED.value(),
                 new Date(),
                 "Authorization token not found. Please provide a Bearer token.",
+                request.getDescription(false)
+        );
+    }
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorMessage badCredentials(
+            BadCredentialsException e,
+            WebRequest request) {
+
+        log.warn("Login failed: invalid username or password");
+
+        return new ErrorMessage(
+                HttpStatus.UNAUTHORIZED.value(),
+                new Date(),
+                "Invalid email or password.",
+                request.getDescription(false)
+        );
+    }
+    @ExceptionHandler(JwtException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorMessage invalidJwtToken(
+            JwtException e,
+            WebRequest request) {
+
+        log.warn("Invalid JWT token: {}", e.getMessage());
+
+        return new ErrorMessage(
+                HttpStatus.UNAUTHORIZED.value(),
+                new Date(),
+                "Invalid or tampered access token. Please login again.",
                 request.getDescription(false)
         );
     }

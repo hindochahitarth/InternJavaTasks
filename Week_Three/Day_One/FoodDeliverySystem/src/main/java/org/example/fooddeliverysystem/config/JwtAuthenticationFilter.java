@@ -124,11 +124,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             logger.error("JWT Filter interception error occurred: ", e);
 
             handlerExceptionResolver.resolveException(request, response, null, e);
-
+    return;
         }
 
         catch (JwtException e){
             handlerExceptionResolver.resolveException(request,response,null,e);
+            return;
         }
         //filterChain.doFilter(request, response);
         catch (IllegalArgumentException e) {
