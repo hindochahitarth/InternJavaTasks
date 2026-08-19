@@ -53,7 +53,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
 
+        if (authentication != null && authentication.isAuthenticated()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         // filter chain is chain of security checks that an HTTP request must pass
         // through before reaching code
         final String authHeader = request.getHeader("Authorization");
@@ -88,7 +94,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             final String userEmail = jwtService.extractUsername(jwt);// pass token decodes it and reads actual data
 
             // security context store details of user who is logged in currently
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             // checks if we found userEmail and authentication
             if (userEmail != null && authentication == null) {
                 // loads user by email
