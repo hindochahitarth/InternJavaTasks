@@ -18,7 +18,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+
 public class SecurityConfiguration {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -43,8 +43,8 @@ public class SecurityConfiguration {
 
 
                 .requestMatchers(HttpMethod.POST,"/api/restaurants/add-restaurant").hasRole("RESTAURANT_OWNER")
-                .requestMatchers(HttpMethod.POST, "/api/cuisines/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.POST, "/api/cuisines/**").hasRole("RESTAURANT_OWNER")
+                .requestMatchers(HttpMethod.POST, "/api/cuisines/**").hasAnyRole("RESTAURANT_OWNER","ADMIN")
+                //.requestMatchers(HttpMethod.POST, "/api/cuisines/**").hasRole("RESTAURANT_OWNER")
 
                 .requestMatchers(HttpMethod.PUT, "/api/cuisines/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/cuisines/**").hasRole("ADMIN")
