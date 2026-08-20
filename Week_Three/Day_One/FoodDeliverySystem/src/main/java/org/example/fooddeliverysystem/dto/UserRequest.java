@@ -3,6 +3,7 @@ package org.example.fooddeliverysystem.dto;
 import jakarta.validation.constraints.*;
 import org.example.fooddeliverysystem.entity.Gender;
 import org.example.fooddeliverysystem.entity.Role;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 public class UserRequest {
 
@@ -19,7 +20,13 @@ public class UserRequest {
 
     private Gender gender;
 
-    @NotBlank
+    //@NotNull // checks if value is not null allows empty string and whitespace
+    @NotBlank(message = "Invalid Phone Number:Empty Phone Number")//checks if value is not null  does not allow "" or " "
+    //^ start matching from beginning of string
+    // \\d matches numeric digit [0-9]
+    // 10 means exactly total 10 digits
+    // $ ends the match at the end of string
+    @Pattern(regexp = "^\\d{10}$",message = "Invalid Phone Number")
     private String mobileNo;
 
     public String getName() {

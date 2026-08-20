@@ -11,6 +11,6 @@ public interface RestaurantMapper {
 
     Restaurant toEntity(RestaurantRequestDTO dto);
 
-    List<RestaurantResponseDTO> toResponseDTO(List<Restaurant> restaurants);
 
+    RestaurantResponseDTO toResponseDTO(Restaurant restaurant);
 }

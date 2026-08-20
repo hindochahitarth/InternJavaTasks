@@ -7,6 +7,7 @@ import java.util.Set;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.fooddeliverysystem.dto.RestaurantRequestDTO;
+import org.example.fooddeliverysystem.dto.RestaurantResponseDTO;
 import org.example.fooddeliverysystem.entity.*;
 import org.example.fooddeliverysystem.exception.ResourceNotFoundException;
 import org.example.fooddeliverysystem.exception.RestaurantAlreadyExists;
@@ -17,6 +18,7 @@ import org.example.fooddeliverysystem.repository.TransactionLogRepository;
 import org.example.fooddeliverysystem.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -50,22 +52,13 @@ public class RestaurantService {
         if(!owner.getRole().equals(Role.RESTAURANT_OWNER)){
             throw new RuntimeException("User is not restaurant owner");
         }
-        Restaurant restaurant=new Restaurant();
-      //  Restaurant restaurant = restaurantMapper.toEntity(request);
+        Restaurant restaurant = restaurantMapper.toEntity(request);
 
 
-        restaurant.setName(request.getName());
-        restaurant.setAddress(request.getAddress());
-        restaurant.setDescription(request.getDescription());
-        restaurant.setEmail(request.getEmail());
-        restaurant.setPhone(request.getPhone());
-        //restaurant.setOwner(owner);
-        // restaurant.setStatus(RestaurantStatus.ACTIVE);
-        restaurant.setCity(request.getCity());
-        restaurant.setStatus(RestaurantStatus.ACTIVE);
-        // restaurant.setCuisineType(request.getCuisineType());
         List<CuisineType> cuisineTypes =
                 cuisineTypeRepository.findAllById(request.getCuisineTypeIds());
+        restaurant.setStatus(RestaurantStatus.ACTIVE);
+
         Set<CuisineType> cuisineSet = new LinkedHashSet<>(cuisineTypes);
         restaurant.setCuisineTypes(cuisineSet);
 
@@ -75,7 +68,7 @@ public class RestaurantService {
             );
         }
 
-        Restaurant savedRestaurant = restaurantRepository.saveAndFlush(restaurant);
+        Restaurant savedRestaurant = restaurantRepository.save(restaurant);
         log.info("Successfully created new Restaurant with ID: {} ",savedRestaurant.getId());
 
         TransactionLog log = new TransactionLog();
@@ -85,9 +78,9 @@ public class RestaurantService {
         return savedRestaurant;
     }
 
-    public Page<Restaurant> getAllRestaurants(Pageable pageable) {
-
-        return restaurantRepository.findAll(pageable);
+    public Page<RestaurantResponseDTO> getAllRestaurants(Pageable pageable) {
+        Page<Restaurant> restaurants=restaurantRepository.findAll(pageable);
+        return restaurants.map(restaurant -> restaurantMapper.toResponseDTO(restaurant));
     }
 
     public void deleteRestaurantById(Long id) {

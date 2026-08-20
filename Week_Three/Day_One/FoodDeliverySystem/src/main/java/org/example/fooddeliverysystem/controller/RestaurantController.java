@@ -4,6 +4,7 @@ import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.fooddeliverysystem.dto.RestaurantRequestDTO;
+import org.example.fooddeliverysystem.dto.RestaurantResponseDTO;
 import org.example.fooddeliverysystem.entity.Restaurant;
 import org.example.fooddeliverysystem.service.RestaurantService;
 import org.springframework.data.domain.Page;
@@ -36,12 +37,12 @@ public class    RestaurantController {
 
     // USING @RequestMapping(method=RequestMethod.GET)
     @GetMapping("/get-all-restaurants")
-    public ResponseEntity<Page<Restaurant>> getAllRestaurant(
+    public ResponseEntity<Page<RestaurantResponseDTO>> getAllRestaurant(
 
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam() int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Restaurant> restaurants = restaurantService.getAllRestaurants(pageable);
+        Page<RestaurantResponseDTO> restaurants = restaurantService.getAllRestaurants(pageable);
         log.info("Fetching all restaurants ");
         return ResponseEntity.status(HttpStatus.OK).body(restaurants);
     }
