@@ -9,16 +9,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.fooddeliverysystem.dto.RestaurantRequestDTO;
 import org.example.fooddeliverysystem.dto.RestaurantResponseDTO;
 import org.example.fooddeliverysystem.entity.*;
+import org.example.fooddeliverysystem.enums.RestaurantStatus;
+import org.example.fooddeliverysystem.enums.Role;
+import org.example.fooddeliverysystem.exception.InvalidUserException;
 import org.example.fooddeliverysystem.exception.ResourceNotFoundException;
-import org.example.fooddeliverysystem.exception.RestaurantAlreadyExists;
 import org.example.fooddeliverysystem.mapper.RestaurantMapper;
 import org.example.fooddeliverysystem.repository.CuisineTypeRepository;
 import org.example.fooddeliverysystem.repository.RestaurantRepository;
 import org.example.fooddeliverysystem.repository.TransactionLogRepository;
 import org.example.fooddeliverysystem.repository.UserRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -47,10 +49,10 @@ public class RestaurantService {
 
     @Transactional
     public Restaurant createRestaurant(RestaurantRequestDTO request) {
-        User owner=userRepository.findById(request.getOwnerId()).orElseThrow(() -> new ResourceNotFoundException("User Not found with id"+request.getOwnerId()));
+        User owner = userRepository.findById(request.getOwnerId()).orElseThrow(() -> new ResourceNotFoundException("User Not found with id" + request.getOwnerId()));
 
-        if(!owner.getRole().equals(Role.RESTAURANT_OWNER)){
-            throw new RuntimeException("User is not restaurant owner");
+        if (!owner.getRole().equals(Role.RESTAURANT_OWNER)) {
+            throw new InvalidUserException("User is not restaurant owner");
         }
         Restaurant restaurant = restaurantMapper.toEntity(request);
 
@@ -69,7 +71,7 @@ public class RestaurantService {
         }
 
         Restaurant savedRestaurant = restaurantRepository.save(restaurant);
-        log.info("Successfully created new Restaurant with ID: {} ",savedRestaurant.getId());
+        log.info("Successfully created new Restaurant with ID: {} ", savedRestaurant.getId());
 
         TransactionLog log = new TransactionLog();
         log.setMessage("Created Restaurant " + savedRestaurant.getId());
@@ -78,19 +80,21 @@ public class RestaurantService {
         return savedRestaurant;
     }
 
+    @Cacheable(value = "allRestaurants", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     public Page<RestaurantResponseDTO> getAllRestaurants(Pageable pageable) {
-        Page<Restaurant> restaurants=restaurantRepository.findAll(pageable);
+        Page<Restaurant> restaurants = restaurantRepository.findAll(pageable);
         return restaurants.map(restaurant -> restaurantMapper.toResponseDTO(restaurant));
     }
 
     public void deleteRestaurantById(Long id) {
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Restaurant with id " + id + " does not exist "));
 
         restaurantRepository.deleteById(id);
     }
 
     public Restaurant updateRestaurant(Long id, RestaurantRequestDTO request) {
         Restaurant restaurant = restaurantRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found "));
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant with id " + id + " not found "));
 
         restaurant.setName(request.getName());
         restaurant.setPhone(request.getPhone());
@@ -106,9 +110,12 @@ public class RestaurantService {
 
         return restaurantRepository.findByName(name);
     }
-//    public List<Restaurant> getRestaurantByCuisine(String cuisineName){
+
+    //    public List<Restaurant> getRestaurantByCuisine(String cuisineName){
 //
 //    }
+    @Cacheable(value = "RestaurantCity", key = "#city")
+
     public List<Restaurant> getRestaurantByCity(String city) {
         return restaurantRepository.findByCity(city);
     }
@@ -131,7 +138,7 @@ public class RestaurantService {
     // .build();
     // }
     public Restaurant toggleRestaurantStatus(Long id) {
-        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(() ->new  ResourceNotFoundException("No Restaurant with Restaurant ID :- " +id+" Found "));
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No Restaurant with Restaurant ID :- " + id + " Found "));
         RestaurantStatus newStatus = (restaurant.getStatus() == RestaurantStatus.ACTIVE) ? RestaurantStatus.INACTIVE
                 : RestaurantStatus.ACTIVE;
         restaurant.setStatus(newStatus);

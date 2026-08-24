@@ -1,17 +1,17 @@
 package org.example.fooddeliverysystem.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.fooddeliverysystem.dto.MenuItemRequestDTO;
 import org.example.fooddeliverysystem.entity.MenuItem;
-import org.example.fooddeliverysystem.entity.MenuItemStatus;
+import org.example.fooddeliverysystem.enums.MenuItemStatus;
 import org.example.fooddeliverysystem.entity.Restaurant;
-import org.example.fooddeliverysystem.exception.InvalidMenuItemPrice;
+import org.example.fooddeliverysystem.exception.InvalidMenuItemPriceException;
 import org.example.fooddeliverysystem.exception.ResourceNotFoundException;
 import org.example.fooddeliverysystem.repository.MenuItemRepository;
 import org.example.fooddeliverysystem.repository.RestaurantRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -48,18 +48,24 @@ public class MenuItemService {
         return savedItem;
     }
 
+    @Cacheable(value="MenuItem", key="#id")
     public MenuItem getMenuItemById(Long id) {
+
         log.debug("Fetching Menu Details of ID "+id);
 
         return menuItemRepository.findById(id).orElse(null);
     }
 
     public MenuItem updateMenuItem(Long id, MenuItemRequestDTO request) {
+
         log.info("Updating Menu details ");
-        MenuItem menuItem = menuItemRepository.findById(id).orElse(null);
+        MenuItem menuItem = menuItemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("MenuItem with id "+id+" not found "));
         menuItem.setName(request.getName());
         menuItem.setDescription(request.getDescription());
+
         menuItem.setPrice(request.getPrice());
+
+        //log.warn(String.valueOf(request.getPrice().getClass().getSimpleName()));
         menuItem.setImageUrl(request.getImageUrl());
         menuItem.setCategory(request.getCategory());
 
@@ -72,6 +78,8 @@ public class MenuItemService {
     }
 
     public void deleteMenuItemById(Long id) {
+        MenuItem menuItem = menuItemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("MenuItem with id "+id+" not found "));
+
         log.info("Deleting Menu Item with ID ",id);
         menuItemRepository.deleteById(id);
     }
@@ -79,7 +87,7 @@ public class MenuItemService {
     public MenuItem updateMenuItemPrice(Long id, MenuItemRequestDTO request) {
         log.info("Updating Menu Item Price ");
         if(request.getPrice() <=0){
-            throw new InvalidMenuItemPrice("Price must be greater than 0");
+            throw new InvalidMenuItemPriceException("Price must be greater than 0");
         }
         MenuItem menuItem = menuItemRepository.findById(id).orElse(null);
         menuItem.setPrice((request.getPrice()));

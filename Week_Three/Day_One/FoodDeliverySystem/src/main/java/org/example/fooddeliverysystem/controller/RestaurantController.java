@@ -40,7 +40,7 @@ public class    RestaurantController {
     public ResponseEntity<Page<RestaurantResponseDTO>> getAllRestaurant(
 
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam() int size) {
+            @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<RestaurantResponseDTO> restaurants = restaurantService.getAllRestaurants(pageable);
         log.info("Fetching all restaurants ");
@@ -48,8 +48,8 @@ public class    RestaurantController {
     }
 // @RequestMapping(value="/create",method=RequestMethod.POST)
     // post requests to /api/restaurants/add-restaurant
-    @PreAuthorize("hasRole('RESTAURANT_OWNER')")
-    @PostMapping("/add-restaurant")
+        @PreAuthorize("hasRole('RESTAURANT_OWNER')")
+        @PostMapping("/add-restaurant")
     public ResponseEntity<Restaurant> createRestaurant(@RequestBody RestaurantRequestDTO request) {
 
         Restaurant savedRestaurant = restaurantService.createRestaurant(request);
@@ -62,6 +62,7 @@ public class    RestaurantController {
     @DeleteMapping("/delete-restaurant/{id}")
     public ResponseEntity<HttpStatus> deleteRestaurantById(@PathVariable Long id) {
         log.info("Deleting Restaurant ");
+
 
         restaurantService.deleteRestaurantById(id);
         return ResponseEntity.noContent().build();
@@ -87,7 +88,7 @@ public class    RestaurantController {
     }
 
     @GetMapping("/city/{city}")
-    public ResponseEntity<List<Restaurant>> getRestaurantByCity(@PathVariable String city) {
+    public ResponseEntity<List<Restaurant>> getRestaurantByCity(@PathVariable("city") String city) {
         log.info("Fetching Restaurant By City ");
         List<Restaurant> restaurants = restaurantService.getRestaurantByCity(city);
         return ResponseEntity.status(HttpStatus.OK).body(restaurants);

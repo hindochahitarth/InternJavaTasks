@@ -29,7 +29,7 @@ public class MenuItemController {
         this.menuItemService = menuItemService;
     }
 
-    @PostMapping("/createMenuItem")
+    @PostMapping("/create-menu-items")
     public ResponseEntity<MenuItem> createMenuItem(@RequestBody MenuItemRequestDTO request) {
 
         log.info("Creating menu Item ");
@@ -38,13 +38,13 @@ public class MenuItemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MenuItem> getMenuItemById(@PathVariable Long id) {
+    public ResponseEntity<MenuItem> getMenuItemById(@PathVariable("id") Long id) {
         log.info("Fetching Menu Item ....");
         MenuItem menuItem = menuItemService.getMenuItemById(id);
         return ResponseEntity.status(HttpStatus.OK).body(menuItem);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<MenuItem> updateMenuItem(@PathVariable Long id, @RequestBody MenuItemRequestDTO request) {
         log.info("Updating Menuitem ");
         MenuItem menuItem = menuItemService.updateMenuItem(id, request);
@@ -58,14 +58,14 @@ public class MenuItemController {
         return ResponseEntity.status(HttpStatus.OK).body(menuItem);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<MenuItem> deleteMenuItemById(@PathVariable Long id) {
         log.info("Deleting Menu item ");
         menuItemService.deleteMenuItemById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{id}/price")
+    @PatchMapping("/update-price/{id}/price")
     public ResponseEntity<MenuItem> updateMenuItemByPrice(@PathVariable Long id, @RequestParam Double price) {
         log.info("Updating menu item price ");
         MenuItemRequestDTO menuItemRequestDTO = new MenuItemRequestDTO();
